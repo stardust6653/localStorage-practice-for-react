@@ -2,11 +2,21 @@ import { useEffect, useState } from "react";
 import "./App.css";
 
 function App() {
-  const [keyword, setKeyword] = useState(() => {
-    return window.localStorage.getItem("keyword");
-  });
-  const [result, setResult] = useState("");
-  const [typing, setTyping] = useState(false);
+  function useLocalStorage(itemName, value = "") {
+    const [state, setState] = useState(() => {
+      return window.localStorage.getItem(itemName) || "";
+    });
+
+    useEffect(() => {
+      window.localStorage.setItem(itemName, state);
+    }, [state]);
+
+    return [state, setState];
+  }
+
+  const [keyword, setKeyword] = useLocalStorage("keyword");
+  const [result, setResult] = useLocalStorage("result");
+  const [typing, setTyping] = useLocalStorage("typing", false);
 
   function handleOnChange(event) {
     setKeyword(event.target.value);
@@ -19,26 +29,14 @@ function App() {
     setTyping(false);
   }
 
-  useEffect(() => {
-    window.localStorage.setItem("keyword", keyword);
-  }, [keyword]);
-
-  useEffect(() => {
-    window.localStorage.setItem("result", result);
-  }, [keyword]);
-
-  useEffect(() => {
-    window.localStorage.setItem("typing", typing);
-  }, [keyword, result]);
-
   return (
     <div>
       <form>
         <input onChange={handleOnChange}></input>
         <button onClick={handleOnClick}>Search</button>
       </form>
-      <p>{keyword}</p>
-      <p>{result}</p>
+      <p>{typing ? `${keyword}` : ""}</p>
+      <p>{typing ? `당신이 찾고있는 것은 ${keyword}!` : result}</p>
     </div>
   );
 }
