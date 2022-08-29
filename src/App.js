@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 
 function App() {
@@ -13,6 +13,10 @@ function App() {
     event.preventDefault();
     setResult(`지금 당신이 검색한 검색어는 ${keyword}`);
   }
+
+  useEffect(() => {
+    window.localStorage.setItem("keyword", keyword);
+  }, [keyword]);
 
   return (
     <div>
